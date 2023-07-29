@@ -17,6 +17,8 @@ class PatientResource extends Resource
 {
     protected static ?string $model = Patient::class;
 
+    protected static ?string $recordTitleAttribute = 'name';
+
     protected static ?string $navigationIcon = 'heroicon-m-rectangle-stack';
 
     public static function form(Form $form): Form
@@ -117,5 +119,10 @@ class PatientResource extends Resource
             'create' => Pages\CreatePatient::route('/create'),
             'edit' => Pages\EditPatient::route('/{record}/edit'),
         ];
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'type', 'owner.name'];
     }
 }

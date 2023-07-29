@@ -142,4 +142,9 @@ class CustomerResource extends Resource
             ]);
             // ->where('is_active', true);
     }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'contact'];
+    }
 }
