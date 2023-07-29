@@ -17,7 +17,41 @@ class CustomerResource extends Resource
 {
     protected static ?string $model = Customer::class;
 
-    protected static ?string $navigationIcon = 'heroicon-m-rectangle-stack';
+    protected static ?string $recordTitleAttribute = 'name';
+
+    protected static ?string $modelLabel = 'cliente';
+
+    protected static ?string $pluralModelLabel = 'clientes';
+
+    // public static function getPluralModelLabel(): string
+    // {
+    //     return __('filament/resources/customer.plural_label');
+    // }
+
+    protected static ?string $navigationLabel = 'Mis Clientes';
+
+    // public static function getNavigationLabel(): string
+    // {
+    //     return __('filament/resources/customer.navigation_label');
+    // }
+
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+
+    // public static function getNavigationIcon(): ?string
+    // {
+    //     return 'heroicon-o-user-group';
+    // }
+
+    protected static ?int $navigationSort = 2;
+
+    public static function getNavigationSort(): ?int
+    {
+        return 2;
+    }
+
+    protected static ?string $navigationGroup = 'Shop';
+
+    protected static ?string $slug = 'pending-orders';
 
     public static function form(Form $form): Form
     {
@@ -32,7 +66,9 @@ class CustomerResource extends Resource
                 Forms\Components\TextInput::make('password')
                     ->password()
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->hiddenOn('edit'),
+                    // ->visibleOn('create'),
             ]);
     }
 
@@ -58,6 +94,8 @@ class CustomerResource extends Resource
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\Filter::make('verified')
+                ->query(fn (Builder $query): Builder => $query->whereNotNull('email_verified_at')),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -74,14 +112,14 @@ class CustomerResource extends Resource
                 Tables\Actions\CreateAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -90,13 +128,15 @@ class CustomerResource extends Resource
             'view' => Pages\ViewCustomer::route('/{record}'),
             'edit' => Pages\EditCustomer::route('/{record}/edit'),
         ];
-    }    
-    
+    }
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
-            ]);
+                // ActiveScope::class
+            ])
+            ->where('is_active', true);
     }
 }
