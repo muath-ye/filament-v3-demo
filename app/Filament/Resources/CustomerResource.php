@@ -69,6 +69,8 @@ class CustomerResource extends Resource
                     ->maxLength(255)
                     ->hiddenOn('edit'),
                     // ->visibleOn('create'),
+                Forms\Components\Toggle::make('is_active')
+                    ->required(),
             ]);
     }
 
@@ -80,6 +82,7 @@ class CustomerResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('contact')
                     ->searchable(),
+                Tables\Columns\ToggleColumn::make('is_active'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -95,7 +98,7 @@ class CustomerResource extends Resource
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
                 Tables\Filters\Filter::make('verified')
-                ->query(fn (Builder $query): Builder => $query->whereNotNull('email_verified_at')),
+                    ->query(fn (Builder $query): Builder => $query->whereNotNull('email_verified_at')),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -136,7 +139,7 @@ class CustomerResource extends Resource
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
                 // ActiveScope::class
-            ])
-            ->where('is_active', true);
+            ]);
+            // ->where('is_active', true);
     }
 }
